@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# input files
+*.csv
+*.tsv
+*.xlsx
+
+# Compiled Output files
+dist/
+
+# Generated project status files with the name [project]-[quarter]-[year].json
+*-*-*.json
+
+# Published artifacts
+deploy/
