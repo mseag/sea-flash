@@ -1,0 +1,18 @@
+  
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col">
+          ${card0}
+        </div>
+      </div>
+      <p></p>
+      <p></p>
+      <p></p>
+      <div class="row">
+        <div class="col">
+          ${card1}
+        </div>
+      </div>  
+    </div>
+
+    <p style="page-break-after: always;">&nbsp;</p>

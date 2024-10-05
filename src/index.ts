@@ -2,6 +2,8 @@
 // Copyright 2024 SIL Global
 import { CommanderError, program } from 'commander';
 import * as config from './config.js';
+import * as html from './html.js';
+import * as img from './img.js';
 import * as fs from 'fs';
 import require from './cjs-require.js';
 
@@ -12,8 +14,6 @@ program
 //  .version(version, '-v, --version', 'output the current version')
   .description("Utility to generate flashcards for analyzing SE Asia languages")
     .option("-c, --config <path to config.json configuration file>", "path to config.json configuration file")
-    .option("-t, --tsv <path to wordlist.tsv", "path to wordlist.tsv file")
-    .option("-p, --path <path to folder of images", "path to folder of images")
     .exitOverride();
 try {
   program.parse();
@@ -27,55 +27,86 @@ try {
 // Debugging parameters
 const options = program.opts();
 const debugMode = true;
-if (debugMode) {
-  console.log('Parameters:');
-  if (options.config) {
-    console.log(`config.json path: "${options.config}"`);
-  }
-  if (options.tsv) {
-    console.log(`wordlist.tsv file: "${options.tsv}"`);
-  }
-  if (options.path) {
-    console.log(`Images path: "${options.path}"`);
-  }
-  console.log('\n');
-}
-
-// Check if tsv/JSON files exists
-if (options.config && !fs.existsSync(options.config)) {
-  console.error("Can't open config.json file " + options.config);
-  process.exit(1);
-}
-if (options.tsv && !fs.existsSync(options.tsv)) {
-  console.error("Can't open wordlist.tsv " + options.tsv);
-  process.exit(1);
-}
-if (options.path && !fs.existsSync(options.path)) {
-  console.error("Can't open images folder " + options.path);
-  process.exit(1);
-}
 
 // Validate required parameters given
-if (!options.config || !options.tsv || !options.path) {
-  console.error("Need to pass another parameters <-c> <-t> <-p>");
+if (!options.config) {
+  console.error("Need to pass config.json file parameter <-c>");
   process.exit(1);
+}
+
+// Check if config.json file exists
+if (!fs.existsSync(options.config)) {
+  console.error(`Can't open config.json file: "${options.config}"`);
+  process.exit(1);
+}
+
+if (debugMode) {
+  console.log('Parameters:');
+  console.log(`config.json path: "${options.config}"`);
+  console.log('\n');
 }
 
 ////////////////////////////////////////////////////////////////////
 // Routing commands to functions
 ////////////////////////////////////////////////////////////////////
 
-const config = fs.readFileSync(options.config, 'utf-8');
-const tsvText = fs.readFileSync(options.tsv, 'utf-8');
-const tsv = convertTSV(tsvText, config);
-process.exit(1);
+const configFile = readJSON(options.config);
 
-let kmp = readJSON(options.json);
-let keyboards = readJSON(options.keyboards);
+// Validate config file
+if (!configFile.lwc) {
+  console.error(`config file missing language name for lwc`);
+  process.exit(1);
+}
 
-countKeyboards(tsv, kmp, keyboards);
-compareVersions(tsv, kmp);
-validate(kmp, keyboards);
+if (!configFile.wordlist) {
+  console.error(`config file missing wordlist tsv path`);
+  process.exit(1);
+}
+if (!fs.existsSync(configFile.wordlist)) {
+  console.error("Can't open wordlist.tsv " + configFile.wordlist);
+  process.exit(1);
+}
+
+if (!configFile.images) {
+  console.error(`config file missing images path`);
+  process.exit(1);
+}
+if (!fs.existsSync(configFile.images)) {
+  console.error("Can't open images folder " + configFile.images);
+  process.exit(1);
+}
+
+const Img = new img.Img(configFile.images);
+const lwc = configFile.lwc;
+const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
+const tsv = convertTSV(lwc, tsvText);
+
+const Html = new html.Html(`${lwc}-flashcards.htm`);
+
+// Determine range of UID indexes
+let cards : string[] = [];
+const startUID = (configFile.startUID) ? configFile.startUID : 1;
+const endUID = (configFile.endUID) ? configFile.endUID : 50;
+tsv.forEach((f, index) => {
+  let UID = f.uid;
+  if (startUID <= UID && UID <= endUID) {
+    /*
+    if (f.lwc.length > config.longGloss) {
+      longCards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+    } else {
+      cards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+    }*/
+    cards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+  } else {
+    return;
+  }
+});
+
+// Write flashcards to file
+//Html.writeFlashcards2x3(cards);
+Html.writeFlashcards1x2(cards);
+//Html.writeFlashcards1x2(longCards);
+Html.writeHTML();
 
 console.log('All done processing');
 
@@ -94,67 +125,50 @@ function readJSON(file) {
   return obj;
 }
 
-function countKeyboards(csv, kmp, keyboards) {
-  let csvCount = Object.keys(csv).length;
-  let kmpCount = kmp.keyboards.length;
-  let keyboardsCount = keyboards.length;
 
-  if (csvCount != kmpCount) {
-    console.error(`keyboards.csv has ${csvCount} keyboards, kmp.json has ${kmpCount} keyboards`);
-  }
-  if (kmpCount != keyboardsCount) {
-    console.error(`kmp.json has ${kmpCount} keyboards, keyboards.json has ${keyboardsCount} keyboards`);
-  }
-}
-
-function convertTSV(tsvText: any, config: any) : config.configType[] {
+function convertTSV(lwc: string, tsvText: any) : config.configType[] {
   let c : config.configType[] = [];
   let lines = tsvText.split('\n');
+  let headers = lines[0].split('\t');
+  let lwcIndex = headers.indexOf(lwc);
+  if (lwcIndex < 0) {
+    console.error(`config file has lwc ${lwc} that's not in the wordlist headers`);
+    process.exit(1);
+  }
+
   // Discard header line
   lines = lines.splice(1);
   lines.forEach((l, index) => {
     if (l != '') {
       const s = l.split('\t');
-      let unit : config.configType = {
-        id: index,
-        english: s[2],
-        pos: s[0],
-        lwc: config.lwc,
-        ipa: s[1],
-        img: config.img,
+      let uid = parseInt(s[0]);
+      // Sanity check entries
+      if (!s[4]) {
+        console.warn(`English entry not found for UID: ${s[0]}. Skipping...`);
+        return;
       }
-      c[s[1]] = unit;
+      let unit : config.configType = {
+        uid: s[0],
+        pos: s[2],
+        english: s[4],
+        lwc: s[lwcIndex],
+        ipa: "{IPA here}",
+      }
+
+      let imgPath = Img.getImgageName(uid);
+      if (imgPath) {
+        unit.img = {
+          uid: uid,
+          path: imgPath,
+          x: Img.DEFAULT_X,
+          y: Img.DEFAULT_Y
+        }
+      }
+      c[uid] = unit;
     }
   });
 
   return c;
-}
-
-
-/**
- * Compare keyboard versions
- * @param {any} csv - Contents of keyboards.csv
- * @param {any} kmp - Contents of kmp.json
- */
-function compareVersions(csv: any, kmp: any) {
-  const kmpKeyboards = kmp.keyboards;
-  console.log('id\tkeyboard.csv\tkmp.json');
-  kmpKeyboards.forEach(k => {
-    let id = k.id;
-    if (!csv[id]) {
-      console.error(`keyboards.csv doesn't contain ${id}`);
-    } else {
-      if (k.version != csv[id].Version) {
-        console.error(`${id}\t${csv[id].Version}\t${k.version}`);
-
-        // Overwrite csv version
-        csv[id].Version = k.version;
-      }
-    }
-  });
-
-  // Write csv to temp file
-  writeModifiedCSV(csv);
 }
 
 
@@ -166,21 +180,11 @@ function compareVersions(csv: any, kmp: any) {
 function writeModifiedCSV(csv: any) {
   // Header
   fs.writeFileSync('./modified.csv', 'Shortname,ID,Name,Region,9.0 Web Keyboard,Version,Language ID,Language Name\n', 'utf8');
-  
+
   for(const [id, value] of Object.entries(csv)) {
     let c: any = value;
     // Write a line at a time
     let line = `${c.Shortname},${id},${c.Name},${c.Region},${c.Web_9_0_Keyboard},${c.Version},${c.LanguageID},${c.LanguageName}\n`;
     fs.appendFileSync('./modified.csv', line);
   }
-}
-
-// Checks 1-to-1 between keyboards.csv and keyboards.json
-function validate(csv, keyboards) {
-  csv.keyboards.forEach(c => {
-    let match = keyboards.find((k) => c.id == k.id);
-    if (!match) {
-      console.error(`keyboards.csv has ${c.id} but keyboards.json does not`);
-    }
-  })
 }

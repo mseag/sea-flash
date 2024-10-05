@@ -1,18 +1,18 @@
 // Copyright 2024 SIL Global
 // Types and utilities for to generate HTML file of verses in tables
 import * as config from './config.js';
-import * as fs from 'fs';
+import * as fs from 'fs'
+import * as path from 'path'
 
 export class Html {
-  private bookInfo: books.bookType;
-  private chapterRange: number[];
-  private verses: string;
+  // HTML template files
+  public TEMPLATE_ROOT = "templates" + path.sep;
+  public HEADER_IN = `${this.TEMPLATE_ROOT}header.htm.in`;
+  public FLASH_IN = `${this.TEMPLATE_ROOT}flash.htm.in`;
+  public PAGE_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
 
   // Document title
   private title: string;
-
-  // CSS styling to apply to the tables
-  private STYLE = "<style>table.tb {font-size: 14pt; font-family:Sarabun;} .tb td.c1 {width:19%} .c2 {padding: 5px;}</style>";
 
   // Document filename
   private fileName: string;
@@ -20,16 +20,13 @@ export class Html {
   // HTML string that will be written to file
   private str: string;
 
-  constructor(config: config.configType) {
-    this.title = this.setDocumentTitle();
-    this.fileName = this.getFileName();
+  constructor(filename: string) {
+    this.title = "Flash Cards";
+    this.fileName = filename;
 
     // Header which includes title and table styling
-    this.str = "<html><head>" +
-               "<title>" + this.title + "</title>" +
-               this.STYLE +
-               "</head>";
-    this.str += "<h1>" + this.title + "</h1>";
+    this.str = fs.readFileSync(this.HEADER_IN, 'utf-8');
+    //this.str += "<h1>" + this.title + "</h1>";
   }
 
   /**
@@ -41,88 +38,114 @@ export class Html {
   }
 
   /**
-  * Adds HTML text for caption and table of the versions for a single verse
-  * @param {number} currentChapter - Current chapter number
-  * @param {number} currentVerse - Current verse number
-  * @param {draftObjType} obj  = Drafting object
+   * Get the document filename
+   */
+  public getFilename(): string {
+    return this.fileName;
+  }
+
+  /**
+  * Convert flashcard to HTML text
+  * @param {configType} config - Object of current flashcard
+  * @param {imgWidth} number - Image width in pixels
+  * @returns string
   */
-  public addTable(currentChapter: number, currentVerse: number, obj: draft.draftObjType) {
-    // Title for the table
-    let title;
-    if (this.bookInfo.thName) {
-      title = this.bookInfo.thName + ' - ';
+  public makeFlashcard(config: config.configType, imgWidth: number) : string {
+    let flash = this.readTemplate(this.FLASH_IN);
+
+    // Replace variables in template
+    flash = flash.replace("${uid}", config.uid.toString());
+    flash = flash.replace("${pos}", config.pos.toString());
+    flash = flash.replace("${english}", config.english);
+    flash = flash.replace("${lwc}", config.lwc);
+    flash = flash.replace("${ipa}", config.ipa);
+
+    // `<div class="h-100 d-inline-block" style="width: ${imgWidth}px"></div>`;
+    let imgPadding = `<div style="width:${imgWidth} px; height:${imgWidth} px"></div>`;
+    let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid rounded" width="${config.img.x}" height="${config.img.y}"></p>` : imgPadding;
+    flash = flash.replace("${imgPath}", imgString);
+
+    return flash;
+  }
+
+  /**
+   * Append flash card text into the HTML document
+   * One after another
+   * @param cards Continuous string of flashcard text
+   */
+  public writeFlashcards(cards : string[]) {
+    cards.forEach(c => {
+      this.str += c;
+    });
+  }
+
+  /**
+   * Append flash card text into the HTML document
+   * 2 columns x 3 rows
+   * @param cards Array of flashcard text
+   */
+  public writeFlashcards2x3(cards: string[]) {
+    let originalPage = this.readTemplate(this.PAGE_IN);
+    let i=0;
+    while(i < cards.length) {
+      let page = originalPage;
+      page = page.replace("${card0}", cards[i]   ? cards[i] : "");
+      page = page.replace("${card1}", cards[i+1] ? cards[i+1] : "");
+      page = page.replace("${card2}", cards[i+2] ? cards[i+2] : "");
+      page = page.replace("${card3}", cards[i+3] ? cards[i+3] : "");
+      page = page.replace("${card4}", cards[i+4] ? cards[i+4] : "");
+      page = page.replace("${card5}", cards[i+5] ? cards[i+5] : "");
+
+      this.str += page;
+      i+=6;
     }
-    title += this.bookInfo.name + ' ' + currentChapter + ':' + currentVerse;
-
-    let str = `<h2>${title}</h2>`;
-    str += "<table class='tb'>"
-
-    //
-    // Optional table headers
-    //str += "<tr><th>Version</th>";
-    //str += "<th>Verse</th></tr>";
-
-    Object.entries(draft.VERSION_TYPE).forEach(([key, value]) => {
-      str += `<tr><td class='c1'>${value.name}</td><td class='c2'>${obj[key]}</td></tr>`;
-    });
-
-    const NAMES = ["Tawan", "Jum", "La", "Team"];
-    NAMES.forEach(n => {
-      str += `<tr><td class='c1'>${n}</td><td></td></tr>`;
-    });
-
-    str += "</table>";
-    // Horizontal divider gets imported to Google Docs as page break
-    str += "<hr class='pb'>";
-
-    this.str += str;
   }
 
   /**
-   * Add closing HTML tag
+   * Append flash card text into the HTML document
+   * 1 column x 2 rows
+   * @param cards Array of flashcard text
    */
-  public closeFile() {
-    this.str += '</HTML>';
+  public writeFlashcards1x2(cards: string[]) {
+    let originalPage = this.readTemplate(this.PAGE_IN);
+    let i=0;
+    while(i < cards.length) {
+      let page = originalPage;
+      page = page.replace("${card0}", cards[i]   ? cards[i] : "");
+      page = page.replace("${card1}", cards[i+1] ? cards[i+1] : "");
+
+      this.str += page;
+      i+=2;
+    }
   }
 
   /**
-   * Write the HTML string to file
+   * Close the body and HTML tags in the document
    */
-  public writeFile() {
+  public closeDocument() {
+    this.str += "</body></html>";
+  }
+
+  /**
+   * Write the HTML string to HTML file
+   */
+  public writeHTML() {
+    this.closeDocument();
     fs.writeFileSync('./' + this.fileName, this.str);
+    console.info(`Flashcards written to ${this.fileName}`);
   }
 
-  private setDocumentTitle() : string {
-    let title = (this.bookInfo.thName) ? this.bookInfo.thName + ' - ' + this.bookInfo.name :
-      this.bookInfo.name;
-
-    title += ' Ch ' + this.chapterRange[0];
-    if (this.chapterRange[0] == this.chapterRange[1]) {
-      // Single chapter with verse(s)
-      if (this.verses) {
-        title += ':' + this.verses;
-      } else {
-        // Determine the verse ranges
-        title += ':1-' + this.bookInfo.versesInChapter[this.chapterRange[0]];
-      }
-    } else {
-      // Multiple chapters (no verse range)
-      title += '-' + this.chapterRange[1];
+  /**
+   * Reads the template file and returns a string
+   * @param template string
+   * @returns string
+   */
+  private readTemplate(template: string): string {
+    if (!fs.existsSync(template)) {
+      console.error("Can't open flashcard template file " + template);
+      process.exit(1);
     }
-
-    return title;
-  }
-
-  private getFileName(): string{
-    const bookName = this.bookInfo.name;
-    const chapters = (this.chapterRange[0] == this.chapterRange[1]) ?
-      this.chapterRange[0] :
-      `${this.chapterRange[0]}-${this.chapterRange[1]}`;
-    let fileName = this.bookInfo.thName ? `${this.bookInfo.thName} - ` : "";
-    fileName += this.verses ?
-      `${bookName}Ch${chapters}-${this.verses}.html` :
-      `${bookName}Ch${chapters}.html`
-    return fileName;
+    return fs.readFileSync(template, 'utf-8');
   }
 }
 

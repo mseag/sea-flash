@@ -9,8 +9,9 @@ node_modules/
 # Compiled Output files
 dist/
 
-# Generated project status files with the name [project]-[quarter]-[year].json
-*-*-*.json
+# Generated flashcard file
+*-flashcards.htm
+*.pdf
 
 # Published artifacts
 deploy/

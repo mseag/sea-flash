@@ -1,32 +1,35 @@
+import * as img from './img.js';
 
 // Part of speech enumeration
 export enum PoS {
-  noun,
-  verb
+  I,
+  II,
+  III
 }
 
-export interface imgType {
-  id : number; // ID number corresponding to word
-  path : string;
-  x : number; // Horizontal pixel size
-  y : number; // Vertical pixel size
+export const longGloss = 80; // Character length to put in "longer" flashcards
+
+// Object to hold program configuration
+export interface configFileType 
+{
+  lwc: string;      // Language in wordlist to use for LWC
+  wordlist: string; // Path to wordlist
+  images: string;   // Path to images folder
+
+  // Optional parameters
+  startUID?: number; // Generating flashcards starting with this UID in the wordlist
+  endUID?: number;   // The last UID in the wordlist to generate flashcard
 }
 
-export interface lwcType {
-  languageID: string; // BCP-47 language ID of the LWC
-  gloss: string;
-
-  // Optional font information
-  fontPath?: string;
-  fontSize?: number;
-}
-
+// Object to hold flashcard info
 export interface configType {
-  id: number;
-  english: string; // Word in English
+  uid: number;
   pos: PoS;
-  lwc: lwcType;
-  ipa: string;
 
-  img?: imgType;
+  english: string; // Word(s) in English
+  lwc:     string; // Word(s) in lwc
+
+  ipa: string; // Word in IPA
+
+  img?: img.imgType;
 }

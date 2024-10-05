@@ -14,9 +14,7 @@
         "${workspaceFolder}/dist/**.js"
       ],
       "args": [
-        "-c", "/home/darcy/src/sea-flash/config.json",
-        "-t", "/home/darcy/src/sea-flash/wordlist.tsv",
-        "-p", "/home/darcy/src/sea-flash/images/"
+        "-c", "c:\\src\\sea-flash\\config.json",
       ]
     },
     {
