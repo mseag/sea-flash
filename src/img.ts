@@ -11,8 +11,8 @@ export interface imgType {
 export const IMG_FILTER_REGEX = /(bw|c)\d{4}\.(jpg|png)/;
 
 export class Img {
-  public DEFAULT_X = 260; // pixels
-  public DEFAULT_Y = 260; // pixels
+  public DEFAULT_X = 220; // pixels
+  public DEFAULT_Y = 220; // pixels
 
   // Folder path of images
   private root: string;

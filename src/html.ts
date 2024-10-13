@@ -62,7 +62,7 @@ export class Html {
 
     // `<div class="h-100 d-inline-block" style="width: ${imgWidth}px"></div>`;
     let imgPadding = `<div style="width:${imgWidth} px; height:${imgWidth} px"></div>`;
-    let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid rounded" width="${config.img.x}" height="${config.img.y}"></p>` : imgPadding;
+    let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid rounded img-thumbnail" style="max-width: ${config.img.x}px; max-height:${config.img.y}px"></p>` : imgPadding;
     flash = flash.replace("${imgPath}", imgString);
 
     return flash;
