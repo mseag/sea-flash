@@ -59,10 +59,11 @@ export class Html {
     flash = flash.replace("${english}", config.english);
     flash = flash.replace("${lwc}", config.lwc);
     flash = flash.replace("${ipa}", config.ipa);
+    flash = flash.replace("${reference}", `#${config.uid.toString().padStart(4, "0")}`);
 
     // `<div class="h-100 d-inline-block" style="width: ${imgWidth}px"></div>`;
     let imgPadding = `<div style="width:${imgWidth} px; height:${imgWidth} px"></div>`;
-    let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid rounded img-thumbnail" style="max-width: ${config.img.x}px; max-height:${config.img.y}px"></p>` : imgPadding;
+    let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid mt-1 rounded img-thumbnail" style="max-width: ${config.img.x}px; max-height:${config.img.y}px"></p>` : imgPadding;
     flash = flash.replace("${imgPath}", imgString);
 
     return flash;

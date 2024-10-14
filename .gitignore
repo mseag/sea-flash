@@ -5,6 +5,7 @@ node_modules/
 *.csv
 *.tsv
 *.xlsx
+images/
 
 # Compiled Output files
 dist/

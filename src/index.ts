@@ -54,25 +54,30 @@ const configFile = readJSON(options.config);
 
 // Validate config file
 if (!configFile.lwc) {
-  console.error(`config file missing language name for lwc`);
+  console.error(`config file missing language name for "lwc":`);
   process.exit(1);
 }
 
 if (!configFile.wordlist) {
-  console.error(`config file missing wordlist tsv path`);
+  console.error(`config file missing wordlist tsv path "wordlist":`);
   process.exit(1);
 }
 if (!fs.existsSync(configFile.wordlist)) {
-  console.error("Can't open wordlist.tsv " + configFile.wordlist);
+  console.error(`Can't open wordlist.tsv ${configFile.wordlist}`);
   process.exit(1);
 }
 
 if (!configFile.images) {
-  console.error(`config file missing images path`);
+  console.error(`config file missing images path "images":`);
   process.exit(1);
 }
 if (!fs.existsSync(configFile.images)) {
-  console.error("Can't open images folder " + configFile.images);
+  console.error(`Can't open images folder ${configFile.images}`);
+  process.exit(1);
+}
+
+if (configFile.startUID && configFile.endUID && configFile.startUID > configFile.endUID) {
+  console.error(`config file has invalid range: startUID ${configFile.startUID} > endUID ${configFile.endUID}`);
   process.exit(1);
 }
 
@@ -89,7 +94,8 @@ const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
 tsv.forEach((f, index) => {
   let UID = f.uid;
-  if (startUID <= UID && UID <= endUID) {
+  // Only printing cards that have an image
+  if (startUID <= UID && UID <= endUID && f.img) {
     /*
     if (f.lwc.length > config.longGloss) {
       longCards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
