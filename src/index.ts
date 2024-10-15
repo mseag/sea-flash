@@ -98,11 +98,11 @@ tsv.forEach((f, index) => {
   if (startUID <= UID && UID <= endUID && f.img) {
     /*
     if (f.lwc.length > config.longGloss) {
-      longCards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+      longCards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
     } else {
-      cards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+      cards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
     }*/
-    cards.push(Html.makeFlashcard(f, Img.DEFAULT_X+40));
+    cards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
   } else {
     return;
   }
@@ -155,10 +155,10 @@ function convertTSV(lwc: string, tsvText: any) : config.configType[] {
       }
       let unit : config.configType = {
         uid: s[0],
-        pos: s[2],
+        pos: s[2], // TODO: fix
         english: s[4],
         lwc: s[lwcIndex],
-        ipa: "{IPA here}",
+        ipa: "{IPA here}", // TODO
       }
 
       let imgPath = Img.getImgageName(uid);

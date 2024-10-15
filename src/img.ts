@@ -11,8 +11,8 @@ export interface imgType {
 export const IMG_FILTER_REGEX = /(bw|c)\d{4}\.(jpg|png)/;
 
 export class Img {
-  public DEFAULT_X = 220; // pixels
-  public DEFAULT_Y = 220; // pixels
+  public DEFAULT_X = 230; // pixels
+  public DEFAULT_Y = 230; // pixels
 
   // Folder path of images
   private root: string;
@@ -21,7 +21,7 @@ export class Img {
     this.root = root;
   }
 
-  /** Return the full path of an image if it exists. Prefere color over black/white
+  /** Return the full path of an image if it exists. Prefer color over black/white
    * UID: number
    * Returns string of the path or null
    */

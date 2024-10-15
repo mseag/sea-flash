@@ -14,7 +14,7 @@
         "${workspaceFolder}/dist/**.js"
       ],
       "args": [
-        "-c", "c:\\src\\sea-flash\\config.json",
+        "-c", "/home/darcy/src/sea-flash/config.json"
       ]
     },
     {

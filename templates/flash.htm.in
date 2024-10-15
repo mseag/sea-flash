@@ -16,8 +16,15 @@
           ${imgPath}
         </div>
         <div class="col-3 rounded border border-start border-end border-primary">
-          <p>&nbsp;1<img src="templates/circles.png" class="card-img-top" alt="syllables"></p><hr class="border border-primary">
-          <p>&nbsp;2<br></p><hr class="border border-primary">
+          <p>&nbsp;1 
+            <img src="./assets/icons/circle.svg" width="20"> 
+            <img src="./assets/icons/circle.svg" width="20"> 
+            <img src="./assets/icons/circle.svg" width="20"> 
+            <img src="./assets/icons/circle.svg" width="20">
+          </p>
+          <hr class="border border-primary">
+          <p>&nbsp;2<br></p>
+          <hr class="border border-primary">
           <p>&nbsp;3</p>
         </div>        
       </div>
