@@ -1,0 +1,10 @@
+{
+  "lwc" : "Burmese",
+  "wordlist": "./EFEO-CNRS-SOAS Word List.tsv",
+  "images" : {
+    "directory": "./images",
+    "defaultSize": [200, 200]
+  },
+  "startUID": 1,
+  "endUID": 2945
+}
