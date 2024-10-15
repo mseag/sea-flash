@@ -1,3 +1,4 @@
+import { configImageType } from './config.js';
 import * as path from 'path';
 import * as  fs from 'fs';
 
@@ -11,14 +12,13 @@ export interface imgType {
 export const IMG_FILTER_REGEX = /(bw|c)\d{4}\.(jpg|png)/;
 
 export class Img {
-  public DEFAULT_X = 230; // pixels
-  public DEFAULT_Y = 230; // pixels
-
   // Folder path of images
   private root: string;
+  public defaultSize: [number, number];
 
-  constructor(root: string) {
-    this.root = root;
+  constructor(configImage: configImageType) {
+    this.root = configImage.directory;
+    this.defaultSize = configImage.defaultSize;
   }
 
   /** Return the full path of an image if it exists. Prefer color over black/white

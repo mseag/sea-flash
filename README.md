@@ -17,8 +17,10 @@ Sample configuration file with Windows pathing:
 {
   "lwc" : "Burmese",
   "wordlist": "C:\\src\\sea-flash\\EFEO-CNRS-SOAS Word List.tsv",
-  "images" : "C:\\src\\sea-flash\\images",
-
+  "images" : {
+    "directory": "./images",
+    "defaultSize": [200, 200]
+  },
   "startUID": 1,
   "endUID": 50
 }
@@ -34,12 +36,20 @@ Sample configuration file with Windows pathing:
 
 `images` 
 
+: Object containing the following info:
+
+`directory`
+
 : [path to images folder]
 
 Images follow the naming convention of bw (black/white) or c (color) followed by 4-digit UID number.
 Can be .jpg or .png
 
 For example: bw0001.jpg correspondsd to word of UID 1
+
+`defaultSize`
+
+: Default image pixel sizes in the flash cards (width, height)
 
 `startUID`
 

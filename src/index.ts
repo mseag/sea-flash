@@ -67,12 +67,16 @@ if (!fs.existsSync(configFile.wordlist)) {
   process.exit(1);
 }
 
-if (!configFile.images) {
-  console.error(`config file missing images path "images":`);
+if (!configFile.images || !configFile.images.directory) {
+  console.error(`config file missing images path "directory":`);
   process.exit(1);
 }
-if (!fs.existsSync(configFile.images)) {
-  console.error(`Can't open images folder ${configFile.images}`);
+if (!fs.existsSync(configFile.images.directory)) {
+  console.error(`Can't open images folder ${configFile.images.directory}`);
+  process.exit(1);
+}
+if (!configFile.images.defaultSize || configFile.images.defaultSize.length != 2) {
+  console.error(`config file missing image "defaultSize": [width, height] in pixels`);
   process.exit(1);
 }
 
@@ -98,11 +102,11 @@ tsv.forEach((f, index) => {
   if (startUID <= UID && UID <= endUID && f.img) {
     /*
     if (f.lwc.length > config.longGloss) {
-      longCards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
+      longCards.push(Html.makeFlashcard(f, configFile.images.defaultSize[0]));
     } else {
-      cards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
+      cards.push(Html.makeFlashcard(f, configFile.images.defaultSize[0]));
     }*/
-    cards.push(Html.makeFlashcard(f, Img.DEFAULT_X));
+    cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
   } else {
     return;
   }
@@ -166,8 +170,8 @@ function convertTSV(lwc: string, tsvText: any) : config.configType[] {
         unit.img = {
           uid: uid,
           path: imgPath,
-          x: Img.DEFAULT_X,
-          y: Img.DEFAULT_Y
+          x: Img.defaultSize[0],
+          y: Img.defaultSize[1]
         }
       }
       c[uid] = unit;
