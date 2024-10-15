@@ -4,15 +4,16 @@ Utility to generate flashcards for analysis of SE Asia languages
 
 Outputs to HTML which can then be printed to PDF.
 
-## Parameters
+Sample Flashcard for "Sky"
+
+![](./assets/sample_sky.png)
+
+## Configuration File
 
 **Required**
 
-`-c [path to config.json file] `
+config.json file in the same directory. This handles configuration for generating flashcards. Sample config.json file with Windows pathing:
 
-: This handles publishing configuration
-
-Sample configuration file with Windows pathing:
 ```json
 {
   "lwc" : "Burmese",
@@ -26,41 +27,54 @@ Sample configuration file with Windows pathing:
 }
 ```
 
-`lwc` 
+### config.json fields
 
-: Language name in the wordlist to use for LWC fields in the flashcards
+The config.json file should have the following fields:
 
-`wordlist` 
+`lwc` **Required** 
+
+: Language name in the wordlist to use for LWC (language of wider communication) fields in the flashcards
+
+`wordlist` **Required** 
 
 : [path to SEA wordlist, which is tab-separated values]
 
-`images` 
+`images` **Required** 
 
 : Object containing the following info:
 
-`directory`
+`directory` **Required**
 
 : [path to images folder]
 
 Images follow the naming convention of bw (black/white) or c (color) followed by 4-digit UID number.
 Can be .jpg or .png
 
-For example: bw0001.jpg correspondsd to word of UID 1
+For example: bw0001.jpg corresponds to word of UID 1
 
-`defaultSize`
+Recommend using a directory of freely distributable images from [The Art of Reading](https://bloomlibrary.org/page/resources/art-of-reading) 
+under the Creative Commons license.
+
+`defaultSize` **Required** 
 
 : Default image pixel sizes in the flash cards (width, height)
 
-`startUID`
+`startUID` *Optional*
 
 : Optional start UID for generating flashcards. If not given, will be 1.
 
-`endUID`
+`endUID` *Optional*
 
 : Optional end UID for last flashcard. If not given, will be something like 50.
 
-## Pre-requisite
+## Pre-requisites and Usage
+
 Install the current LTS of [nodejs](https://nodejs.org/).
+
+Install the dependencies with
+```bash
+npm install
+```
 
 Compile the project with
 ```bash
@@ -69,5 +83,7 @@ npm run build
 
 Run the project with
 ```bash
-node dist/index.js -c "C:\\src\\path...to..\\config.json"
+node dist/index.js
 ```
+
+This will generate an "[*lwc*] flashcards.htm" file which Google Chrome can then print to PDF.

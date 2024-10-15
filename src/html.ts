@@ -1,5 +1,5 @@
 // Copyright 2024 SIL Global
-// Types and utilities for to generate HTML file of verses in tables
+// Types and utilities for to generate HTML file of flashcards
 import * as config from './config.js';
 import * as fs from 'fs'
 import * as path from 'path'
@@ -9,7 +9,9 @@ export class Html {
   public TEMPLATE_ROOT = "templates" + path.sep;
   public HEADER_IN = `${this.TEMPLATE_ROOT}header.htm.in`;
   public FLASH_IN = `${this.TEMPLATE_ROOT}flash.htm.in`;
-  public PAGE_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
+  public PAGE1x2_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
+  public PAGE2x3_IN = `${this.TEMPLATE_ROOT}page2x3.htm.in`;
+  public PAGE_IN = `${this.PAGE1x2_IN}`;
 
   // Document title
   private title: string;
@@ -64,7 +66,7 @@ export class Html {
     // `<div class="h-100 d-inline-block" style="width: ${imgWidth}px"></div>`;
     let imgPadding = `<div style="width:${imgWidth} px; height:${imgWidth} px"></div>`;
     let imgString = (config.img) ? `<p><img src="${config.img.path}" class="img-fluid mt-1 rounded img-thumbnail" style="max-width: ${config.img.x}px; max-height:${config.img.y}px"></p>` : imgPadding;
-    flash = flash.replace("${imgPath}", imgString);
+    flash = flash.replace("${image}", imgString);
 
     return flash;
   }
@@ -143,7 +145,7 @@ export class Html {
    */
   private readTemplate(template: string): string {
     if (!fs.existsSync(template)) {
-      console.error("Can't open flashcard template file " + template);
+      console.error(`Can't open flashcard template file ${template}`);
       process.exit(1);
     }
     return fs.readFileSync(template, 'utf-8');
