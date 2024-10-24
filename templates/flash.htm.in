@@ -1,5 +1,5 @@
 
-    <p class="fs-3 lh-1 text-center">${uid}</p>
+    <br/>
     <div class="container px-4 ">
       <div class="row g-0">
         <div class="col-3 text-center rounded border border-primary">
@@ -25,7 +25,7 @@
           <hr class="border border-primary">
           <p>&nbsp;2<br></p>
           <hr class="border border-primary">
-          <p>&nbsp;3</p>
+          <p class="align-text-bottom">&nbsp;3</p>
         </div>        
       </div>
       <div class="row g-0">

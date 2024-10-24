@@ -54,7 +54,7 @@ const endUID = (configFile.endUID) ? configFile.endUID : 50;
 tsv.forEach((f, index) => {
   let UID = f.uid;
   // Only printing cards that have an image
-  if (startUID <= UID && UID <= endUID) { //} && f.img) {
+  if (startUID <= UID && UID <= endUID && f.img) {
     cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
   } else {
     return;
