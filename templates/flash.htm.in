@@ -1,5 +1,5 @@
 
-    <p class="fs-3 lh-1 text-center">${uid}</p>
+    <br/>
     <div class="container px-4 ">
       <div class="row g-0">
         <div class="col-3 text-center rounded border border-primary">
@@ -15,17 +15,27 @@
         <div class="col-6 text-center rounded border border-primary">
           ${image}
         </div>
-        <div class="col-3 rounded border border-start border-end border-primary">
-          <p>&nbsp;1 
-            <img src="./assets/icons/circle.svg" width="15"> 
-            <img src="./assets/icons/circle.svg" width="15"> 
-            <img src="./assets/icons/circle.svg" width="15"> 
-            <img src="./assets/icons/circle.svg" width="15">
-          </p>
+        <div class="col-3 rounded border border-start border-end border-primary">    
+
+          <div class="d-flex flex-column align-items-start mt-2">
+            <span>
+              &nbsp;1
+              <img src="./assets/icons/circle.svg" width="20" class="ms-2 me-2"> 
+              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+            </span>  
+          </div>
           <hr class="border border-primary">
-          <p>&nbsp;2<br></p>
+          <div class="d-flex flex-column align-items-start">
+              <br/><br/>
+              &nbsp;2
+          </div>
+          <br/><br/>
           <hr class="border border-primary">
-          <p>&nbsp;3</p>
+          <div>
+            &nbsp;3
+          </div>
         </div>        
       </div>
       <div class="row g-0">
