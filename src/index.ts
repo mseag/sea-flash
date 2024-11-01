@@ -45,17 +45,24 @@ const lwc = configFile.lwc;
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
-const Html = new html.Html(`${lwc} flashcards.htm`);
+const Html = new html.Html(`${lwc} (images) flashcards.htm`); // With images
+const Html_wo = new html.Html(`${lwc} flashcards.htm`);       // Without images
 
 // Determine range of UID indexes
 let cards : string[] = [];
+let cards_wo : string[] = [];
 const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
 tsv.forEach((f, index) => {
   let UID = f.uid;
-  // Only printing cards that have an image
-  if (startUID <= UID && UID <= endUID && f.img) {
-    cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
+  if (startUID <= UID && UID <= endUID) {
+    if (f.img) {
+      // Cards with an image
+      cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
+    } else {
+      // Cards without an image
+      cards_wo.push(Html_wo.makeFlashcard(f, Img.defaultSize[0]));
+    }
   } else {
     return;
   }
@@ -65,6 +72,8 @@ tsv.forEach((f, index) => {
 //Html.writeFlashcards2x3(cards);
 Html.writeFlashcards1x2(cards);
 Html.writeHTML();
+Html_wo.writeFlashcards1x2(cards_wo);
+Html_wo.writeHTML();
 
 console.log('All done processing');
 
