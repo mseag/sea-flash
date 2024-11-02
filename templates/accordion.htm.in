@@ -1,0 +1,12 @@
+  <div class="accordion-item">
+    <h2 class="accordion-header">
+      <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse${start}" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+        Flashcards ${start} to ${end}
+      </button>
+    </h2>
+    <div id="panelsStayOpen-collapse${start}" class="accordion-collapse collapse">
+      <div class="accordion-body">
+        ${flashcard}
+      </div>
+    </div>
+  </div>

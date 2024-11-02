@@ -12,6 +12,7 @@ export class Html {
   public PAGE1x2_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
   public PAGE2x3_IN = `${this.TEMPLATE_ROOT}page2x3.htm.in`;
   public PAGE_IN = `${this.PAGE1x2_IN}`;
+  public ACCORDION_IN = `${this.TEMPLATE_ROOT}accordion.htm.in`;
 
   // Document title
   private title: string;
@@ -105,20 +106,32 @@ export class Html {
   }
 
   /**
-   * Append flash card text into the HTML document
+   * Append flash card text into the HTML document. 
+   * Cards will be organized by accordion groupings
    * 1 column x 2 rows
    * @param cards Array of flashcard text
    */
-  public writeFlashcards1x2(cards: string[]) {
-    let originalPage = this.readTemplate(this.PAGE_IN);
-    let i=0;
-    while(i < cards.length) {
-      let page = originalPage;
-      page = page.replace("${card0}", cards[i]   ? cards[i] : "");
-      page = page.replace("${card1}", cards[i+1] ? cards[i+1] : "");
+  public writeFlashcards1x2(cards: string[], cardsPerAccordion: number ) {
+    const originalPage = this.readTemplate(this.PAGE_IN);
+    let accordionStart=0;
+    while(accordionStart < cards.length) {
+      // Start accordion grouping
+      let accordionStr = this.readTemplate(this.ACCORDION_IN);
+      let flashcardStr = '';
+      for (let start = accordionStart; start < accordionStart+cardsPerAccordion && start < cards.length; start += 2) {
+        let page = originalPage;
+        page = page.replace("${card0}", cards[start]   ? cards[start] : "");
+        page = page.replace("${card1}", cards[start+1] ? cards[start+1] : "");
+        flashcardStr += page;
+      }
+      accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart}`);
+      let end = accordionStart + cardsPerAccordion;
+      accordionStr = accordionStr.replace("${end}", `${end}`);
+      accordionStr = accordionStr.replace("${flashcard}", flashcardStr);
 
-      this.str += page;
-      i+=2;
+      this.str += accordionStr;
+
+      accordionStart += cardsPerAccordion;
     }
   }
 
@@ -126,6 +139,7 @@ export class Html {
    * Close the body and HTML tags in the document
    */
   public closeDocument() {
+    this.str += "</div>"; // close accordion
     this.str += "</body></html>";
   }
 

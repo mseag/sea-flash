@@ -28,6 +28,8 @@ export interface configFileType
   // Optional parameters
   startUID?: number; // Generating flashcards starting with this UID in the wordlist
   endUID?: number;   // The last UID in the wordlist to generate flashcard
+
+  cardsPerAccordion?: number; // Number of flashcards per accordion group. Default to 250
 }
 
 // Object to hold flashcard info
@@ -74,6 +76,11 @@ export function validateFile(configFile) {
 
   if (configFile.startUID && configFile.endUID && configFile.startUID > configFile.endUID) {
     console.error(`config file has invalid range: startUID ${configFile.startUID} > endUID ${configFile.endUID}`);
+    process.exit(1);
+  }
+
+  if (configFile.cardsPerAccordion && configFile.cardsPerAccordion > configFile.endUID) {
+    console.error(`config file has invalid cardsPerAccordion: ${configFile.cardsPerAccordion} > endUID ${configFile.endUID}`);
     process.exit(1);
   }
 }

@@ -51,10 +51,10 @@ const Html = new html.Html(`${lwc} flashcards.htm`);
 let cards : string[] = [];
 const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
+const cardsPerAccordion = (configFile.cardsPerAccordion) ? configFile.cardsPerAccordion : 250;
 tsv.forEach((f, index) => {
   let UID = f.uid;
-  // Only printing cards that have an image
-  if (startUID <= UID && UID <= endUID && f.img) {
+  if (startUID <= UID && UID <= endUID) {
     cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
   } else {
     return;
@@ -63,7 +63,7 @@ tsv.forEach((f, index) => {
 
 // Write flashcards to file
 //Html.writeFlashcards2x3(cards);
-Html.writeFlashcards1x2(cards);
+Html.writeFlashcards1x2(cards, cardsPerAccordion);
 Html.writeHTML();
 
 console.log('All done processing');

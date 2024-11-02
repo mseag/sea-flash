@@ -6,5 +6,6 @@
     "defaultSize": [240, 240]
   },
   "startUID": 1,
-  "endUID": 2945
+  "endUID": 2945,
+  "cardsPerAccordion":  100
 }
