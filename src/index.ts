@@ -1,11 +1,14 @@
 #!/usr/bin/env node
 // Copyright 2024 SIL Global
 import { CommanderError, program } from 'commander';
+import puppeteer, { Puppeteer } from 'puppeteer';
 import * as config from './config.js';
 import * as html from './html.js';
 import * as img from './img.js';
 import * as fs from 'fs';
+import * as path from 'path'
 import require from './cjs-require.js';
+//const __dirname = import.meta.dirname;
 
 ////////////////////////////////////////////////////////////////////
 // Get parameters
@@ -70,12 +73,16 @@ tsv.forEach((f, index) => {
 
 // Write flashcards to file
 //Html.writeFlashcards2x3(cards);
+console.info(Html.getFilename());
 Html.writeFlashcards1x2(cards);
 Html.writeHTML();
 Html_wo.writeFlashcards1x2(cards_wo);
 Html_wo.writeHTML();
 
 console.log('All done processing');
+
+await printPDF(Html_wo.getFilename());
+console.log('Printed to PDF');
 
 ////////////////////////////////////////////////////////////////////
 // Processor functions
@@ -137,4 +144,25 @@ function convertTSV(lwc: string, tsvText: any) : config.configType[] {
   });
 
   return c;
+}
+
+async function printPDF(fileName: string) {
+  const browser = await puppeteer.launch({ headless: true });
+  const page = await browser.newPage();
+  let contentHtml = fs.readFileSync(fileName, 'utf8');
+  await page.setContent(contentHtml, { waitUntil: 'domcontentloaded' });
+  // let contentHtml = `"file:///${process.cwd()}/${fileName}"`
+  //let contentHtml = 'file:///c:/src/sea-flash/Burmese flashcards.htm';
+  //console.log(contentHtml);
+  //await page.goto(contentHtml); //, {waitUntil: 'networkidle0'});
+  // Reflect CSS used for screens instead of print
+  await page.emulateMediaType('screen');
+  const pdf = await page.pdf({
+    path: 'result.pdf',
+    margin: { top: '100px', right: '50px', bottom: '100px', left: '50px' },
+    printBackground: true,
+    format: 'A4'
+  });
+  await browser.close();
+  return pdf
 }
