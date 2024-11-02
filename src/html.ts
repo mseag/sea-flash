@@ -109,29 +109,35 @@ export class Html {
    * Append flash card text into the HTML document. 
    * Cards will be organized by accordion groupings
    * 1 column x 2 rows
-   * @param cards Array of flashcard text
+   * @param cards Array of flashcard text + UIDs
    */
-  public writeFlashcards1x2(cards: string[], cardsPerAccordion: number ) {
+  public writeFlashcards1x2(cards: any[], cardsPerAccordion: number ) {
     const originalPage = this.readTemplate(this.PAGE_IN);
-    let accordionStart=0;
+    let accordionStart=0;    
+    let accordionEnd = accordionStart + cardsPerAccordion;
+    let index = 0;
     while(accordionStart < cards.length) {
       // Start accordion grouping
       let accordionStr = this.readTemplate(this.ACCORDION_IN);
       let flashcardStr = '';
-      for (let start = accordionStart; start < accordionStart+cardsPerAccordion && start < cards.length; start += 2) {
+      while(cards[index+1] && cards[index+1].uid < accordionEnd && index+1 < cards.length) {
         let page = originalPage;
-        page = page.replace("${card0}", cards[start]   ? cards[start] : "");
-        page = page.replace("${card1}", cards[start+1] ? cards[start+1] : "");
+        page = page.replace("${card0}", 
+          cards[index].text && cards[index].uid >= accordionStart && cards[index].uid <= accordionEnd ? cards[index].text : "");
+        page = page.replace("${card1}", 
+          cards[index+1].text && cards[index+1].uid >= accordionStart && cards[index+1].uid <= accordionEnd  ? cards[index+1].text : "");
         flashcardStr += page;
+        index += 2;
       }
-      accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart}`);
-      let end = accordionStart + cardsPerAccordion;
-      accordionStr = accordionStr.replace("${end}", `${end}`);
+      accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart.toString().padStart(4, "0")}`);
+      accordionStr = accordionStr.replace("${end}", `${(accordionEnd-1).toString().padStart(4, "0")}`);
       accordionStr = accordionStr.replace("${flashcard}", flashcardStr);
 
       this.str += accordionStr;
 
+      // Increment the start/end for the next accordion group
       accordionStart += cardsPerAccordion;
+      accordionEnd += cardsPerAccordion;
     }
   }
 

@@ -48,14 +48,19 @@ const tsv = convertTSV(lwc, tsvText);
 const Html = new html.Html(`${lwc} flashcards.htm`);
 
 // Determine range of UID indexes
-let cards : string[] = [];
+let cards : any[] = [];
 const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
 const cardsPerAccordion = (configFile.cardsPerAccordion) ? configFile.cardsPerAccordion : 250;
 tsv.forEach((f, index) => {
   let UID = f.uid;
   if (startUID <= UID && UID <= endUID) {
-    cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
+    cards.push(
+      {
+        text: Html.makeFlashcard(f, Img.defaultSize[0]),
+        uid: UID
+      }
+    );
   } else {
     return;
   }

@@ -1,50 +1,49 @@
 
-    <br/>
-    <div class="container px-4 ">
-      <div class="row g-0">
-        <div class="col-3 text-center rounded border border-primary">
-          <p><small>N / V / Other</small></p>
-          <!--${pos}-->
-          <hr class="border border-primary">
-          <p><small>IPA</small></p>
           <br/>
-          <br/>
-          <br/>
-          <!--${ipa}-->
-        </div>
-        <div class="col-6 text-center rounded border border-primary">
-          ${image}
-        </div>
-        <div class="col-3 rounded border border-start border-end border-primary">    
+          <div class="container px-4 ">
+            <div class="row g-0">
+              <div class="col-3 text-center rounded border border-primary">
+                <p><small>N / V / Other</small></p>
+                <!--${pos}-->
+                <hr class="border border-primary">
+                <p><small>IPA</small></p>
+                <br/>
+                <br/>
+                <br/>
+                <!--${ipa}-->
+              </div>
+              <div class="col-6 text-center rounded border border-primary">
+                ${image}
+              </div>
+              <div class="col-3 rounded border border-start border-end border-primary">    
 
-          <div class="d-flex flex-column align-items-start mt-2">
-            <span>
-              &nbsp;1
-              <img src="./assets/icons/circle.svg" width="20" class="ms-2 me-2"> 
-              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
-              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
-              <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
-            </span>  
+                <div class="d-flex flex-column align-items-start mt-2">
+                  <span>
+                    &nbsp;1
+                    <img src="./assets/icons/circle.svg" width="20" class="ms-2 me-2"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+                  </span>  
+                </div>
+                <hr class="border border-primary">
+                <div class="d-flex flex-column align-items-start">
+                    <br/><br/>
+                    &nbsp;2
+                </div>
+                <br/><br/>
+                <hr class="border border-primary">
+                <div>
+                  &nbsp;3
+                </div>
+              </div>        
+            </div>
+            <div class="row g-0">
+              <div class="col-12 text-center rounded border-start border-end border-bottom border-primary">
+                <p class="fs-3">${lwc}</p>
+                <p class="fs-5 lh-1">${english}</p>
+                <p class="fs-7 lh-1">${reference}</p>
+              </div>
+            </div>
           </div>
-          <hr class="border border-primary">
-          <div class="d-flex flex-column align-items-start">
-              <br/><br/>
-              &nbsp;2
-          </div>
-          <br/><br/>
-          <hr class="border border-primary">
-          <div>
-            &nbsp;3
-          </div>
-        </div>        
-      </div>
-      <div class="row g-0">
-        <div class="col-12 text-center rounded border-start border-end border-bottom border-primary">
-          <p class="fs-3">${lwc}</p>
-          <p class="fs-5 lh-1">${english}</p>
-          <p class="fs-7 lh-1">${reference}</p>
-        </div>
-      </div>
-    </div>
-    <br/>
-    
+          <br/>
