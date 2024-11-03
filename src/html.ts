@@ -23,12 +23,13 @@ export class Html {
   // HTML string that will be written to file
   private str: string;
 
-  constructor(filename: string) {
-    this.title = "Flash Cards";
+  constructor(filename: string, lwc: string) {
+    this.title = `${lwc} Flash Cards`;
     this.fileName = filename;
 
     // Header which includes title and table styling
     this.str = fs.readFileSync(this.HEADER_IN, 'utf-8');
+    this.str = this.str.replace("${title}", this.title);
     //this.str += "<h1>" + this.title + "</h1>";
   }
 

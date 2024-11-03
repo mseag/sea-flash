@@ -45,7 +45,7 @@ const lwc = configFile.lwc;
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
-const Html = new html.Html(`${lwc} flashcards.htm`);
+const Html = new html.Html(`${lwc} flashcards.htm`, lwc);
 
 // Determine range of UID indexes
 let cards : any[] = [];
