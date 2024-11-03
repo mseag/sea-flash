@@ -20,10 +20,11 @@ config.json file in the same directory. This handles configuration for generatin
   "wordlist": "C:\\src\\sea-flash\\EFEO-CNRS-SOAS Word List.tsv",
   "images" : {
     "directory": "./images",
-    "defaultSize": [200, 200]
+    "defaultSize": [240, 240]
   },
   "startUID": 1,
-  "endUID": 50
+  "endUID": 50,
+  "cardsPerAccordion": 200
 }
 ```
 
@@ -48,9 +49,10 @@ The config.json file should have the following fields:
 : [path to images folder]
 
 Images follow the naming convention of bw (black/white) or c (color) followed by 4-digit UID number.
+
 Can be .jpg or .png
 
-For example: bw0001.jpg corresponds to word of UID 1
+For example: *bw0001.jpg* corresponds a black&white image for word of UID 1
 
 Recommend using a directory of freely distributable images from [The Art of Reading](https://bloomlibrary.org/page/resources/art-of-reading) 
 under the Creative Commons license.
@@ -66,6 +68,10 @@ under the Creative Commons license.
 `endUID` *Optional*
 
 : Optional end UID for last flashcard. If not given, will be something like 50.
+
+`cardsPerAccordion` *Optional*
+
+: Optional number of flashcards to orgranize by accordion group. The accordion group defaults to collapsed, and can be expanded. If not given, will be 250. This cannot be larger than `endUID`.
 
 ## Pre-requisites and Usage
 
