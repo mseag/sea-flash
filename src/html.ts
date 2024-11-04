@@ -13,6 +13,7 @@ export class Html {
   public PAGE2x3_IN = `${this.TEMPLATE_ROOT}page2x3.htm.in`;
   public PAGE_IN = `${this.PAGE1x2_IN}`;
   public ACCORDION_IN = `${this.TEMPLATE_ROOT}accordion.htm.in`;
+  public FOOTER_IN = `${this.TEMPLATE_ROOT}footer.htm.in`;
 
   // Document title
   private title: string;
@@ -29,7 +30,7 @@ export class Html {
 
     // Header which includes title and table styling
     this.str = fs.readFileSync(this.HEADER_IN, 'utf-8');
-    this.str = this.str.replace("${title}", this.title);
+    this.str = this.str.replace(/\${title}/gi, this.title);
     //this.str += "<h1>" + this.title + "</h1>";
   }
 
@@ -146,8 +147,7 @@ export class Html {
    * Close the body and HTML tags in the document
    */
   public closeDocument() {
-    this.str += "</div>"; // close accordion
-    this.str += "</body></html>";
+    this.str += fs.readFileSync(this.FOOTER_IN, 'utf-8');
   }
 
   /**

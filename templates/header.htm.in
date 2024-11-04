@@ -9,4 +9,5 @@
    <script src="./assets/bootstrap/js/bootstrap.bundle.min.js"></script>
 </head>
 <body>
+  <h1 class="text-center">${title}</h1>
   <div class="accordion" id="alwaysOpen">
