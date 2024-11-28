@@ -12,6 +12,8 @@ export class Html {
   public PAGE1x2_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
   public PAGE2x3_IN = `${this.TEMPLATE_ROOT}page2x3.htm.in`;
   public PAGE_IN = `${this.PAGE1x2_IN}`;
+  public ACCORDION_IN = `${this.TEMPLATE_ROOT}accordion.htm.in`;
+  public FOOTER_IN = `${this.TEMPLATE_ROOT}footer.htm.in`;
 
   // Document title
   private title: string;
@@ -22,12 +24,13 @@ export class Html {
   // HTML string that will be written to file
   private str: string;
 
-  constructor(filename: string) {
-    this.title = "Flash Cards";
+  constructor(filename: string, lwc: string) {
+    this.title = `${lwc} Flash Cards`;
     this.fileName = filename;
 
     // Header which includes title and table styling
     this.str = fs.readFileSync(this.HEADER_IN, 'utf-8');
+    this.str = this.str.replace(/\${title}/gi, this.title);
     //this.str += "<h1>" + this.title + "</h1>";
   }
 
@@ -105,20 +108,38 @@ export class Html {
   }
 
   /**
-   * Append flash card text into the HTML document
+   * Append flash card text into the HTML document. 
+   * Cards will be organized by accordion groupings
    * 1 column x 2 rows
-   * @param cards Array of flashcard text
+   * @param cards Array of flashcard text + UIDs
    */
-  public writeFlashcards1x2(cards: string[]) {
-    let originalPage = this.readTemplate(this.PAGE_IN);
-    let i=0;
-    while(i < cards.length) {
-      let page = originalPage;
-      page = page.replace("${card0}", cards[i]   ? cards[i] : "");
-      page = page.replace("${card1}", cards[i+1] ? cards[i+1] : "");
+  public writeFlashcards1x2(cards: any[], cardsPerAccordion: number ) {
+    const originalPage = this.readTemplate(this.PAGE_IN);
+    let accordionStart=0;    
+    let accordionEnd = accordionStart + cardsPerAccordion;
+    let index = 0;
+    while(accordionStart < cards.length) {
+      // Start accordion grouping
+      let accordionStr = this.readTemplate(this.ACCORDION_IN);
+      let flashcardStr = '';
+      while(cards[index+1] && cards[index+1].uid < accordionEnd && index+1 < cards.length) {
+        let page = originalPage;
+        page = page.replace("${card0}", 
+          cards[index].text && cards[index].uid >= accordionStart && cards[index].uid <= accordionEnd ? cards[index].text : "");
+        page = page.replace("${card1}", 
+          cards[index+1].text && cards[index+1].uid >= accordionStart && cards[index+1].uid <= accordionEnd  ? cards[index+1].text : "");
+        flashcardStr += page;
+        index += 2;
+      }
+      accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart.toString().padStart(4, "0")}`);
+      accordionStr = accordionStr.replace("${end}", `${(accordionEnd-1).toString().padStart(4, "0")}`);
+      accordionStr = accordionStr.replace("${flashcard}", flashcardStr);
 
-      this.str += page;
-      i+=2;
+      this.str += accordionStr;
+
+      // Increment the start/end for the next accordion group
+      accordionStart += cardsPerAccordion;
+      accordionEnd += cardsPerAccordion;
     }
   }
 
@@ -126,7 +147,7 @@ export class Html {
    * Close the body and HTML tags in the document
    */
   public closeDocument() {
-    this.str += "</body></html>";
+    this.str += fs.readFileSync(this.FOOTER_IN, 'utf-8');
   }
 
   /**

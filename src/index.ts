@@ -45,17 +45,22 @@ const lwc = configFile.lwc;
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
-const Html = new html.Html(`${lwc} flashcards.htm`);
+const Html = new html.Html(`${lwc} flashcards.htm`, lwc);
 
 // Determine range of UID indexes
-let cards : string[] = [];
+let cards : any[] = [];
 const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
+const cardsPerAccordion = (configFile.cardsPerAccordion) ? configFile.cardsPerAccordion : 250;
 tsv.forEach((f, index) => {
   let UID = f.uid;
-  // Only printing cards that have an image
-  if (startUID <= UID && UID <= endUID && f.img) {
-    cards.push(Html.makeFlashcard(f, Img.defaultSize[0]));
+  if (startUID <= UID && UID <= endUID) {
+    cards.push(
+      {
+        text: Html.makeFlashcard(f, Img.defaultSize[0]),
+        uid: UID
+      }
+    );
   } else {
     return;
   }
@@ -63,7 +68,7 @@ tsv.forEach((f, index) => {
 
 // Write flashcards to file
 //Html.writeFlashcards2x3(cards);
-Html.writeFlashcards1x2(cards);
+Html.writeFlashcards1x2(cards, cardsPerAccordion);
 Html.writeHTML();
 
 console.log('All done processing');
