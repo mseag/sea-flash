@@ -4,6 +4,13 @@ import * as config from './config.js';
 import * as fs from 'fs'
 import * as path from 'path'
 
+// 3 Types of pages: Flashcards with images, Flashcards without images, and blank flashcards
+export enum HtmlType {
+  IMAGE,
+  NO_IMAGE,
+  BLANK
+}
+
 export class Html {
   // HTML template files
   public TEMPLATE_ROOT = "templates" + path.sep;
@@ -24,8 +31,8 @@ export class Html {
   // HTML string that will be written to file
   private str: string;
 
-  constructor(filename: string, lwc: string) {
-    this.title = `${lwc} Flash Cards`;
+  constructor(filename: string, lwc: string, htmlType: HtmlType) {
+    this.title = `${lwc} (${HtmlType[htmlType]}) Flash Cards`;
     this.fileName = filename;
 
     // Header which includes title and table styling
@@ -59,12 +66,12 @@ export class Html {
     let flash = this.readTemplate(this.FLASH_IN);
 
     // Replace variables in template
-    flash = flash.replace("${uid}", config.uid.toString());
     flash = flash.replace("${pos}", config.pos.toString());
     flash = flash.replace("${english}", config.english);
     flash = flash.replace("${lwc}", config.lwc);
     flash = flash.replace("${ipa}", config.ipa);
-    flash = flash.replace("${reference}", `#${config.uid.toString().padStart(4, "0")}`);
+    flash = flash.replace("${reference}",
+      config.uid ? `#${config.uid.toString().padStart(4, "0")}` : `#`);
 
     // `<div class="h-100 d-inline-block" style="width: ${imgWidth}px"></div>`;
     let imgPadding = `<div style="width:${imgWidth} px; height:${imgWidth} px"></div>`;
@@ -108,31 +115,42 @@ export class Html {
   }
 
   /**
-   * Append flash card text into the HTML document. 
+   * Append flash card text into the HTML document.
    * Cards will be organized by accordion groupings
    * 1 column x 2 rows
    * @param cards Array of flashcard text + UIDs
    */
   public writeFlashcards1x2(cards: any[], cardsPerAccordion: number ) {
     const originalPage = this.readTemplate(this.PAGE_IN);
-    let accordionStart=0;    
-    let accordionEnd = accordionStart + cardsPerAccordion;
+    let accordionStart = cards[0].uid;
     let index = 0;
     while(accordionStart < cards.length) {
       // Start accordion grouping
       let accordionStr = this.readTemplate(this.ACCORDION_IN);
       let flashcardStr = '';
-      while(cards[index+1] && cards[index+1].uid < accordionEnd && index+1 < cards.length) {
+
+      let page = originalPage;
+      accordionStart = cards[index].uid;
+      page = page.replace("${card0}",
+        cards[index].text ? cards[index].text : "");
+      page = page.replace("${card1}",
+        cards[index+1].text ? cards[index+1].text : "");
+      flashcardStr += page;
+      let accordionEnd = cards[index+1].text ? index+1 : index;
+      index += 2;
+
+      while(index % cardsPerAccordion != 0 && index < cards.length) {
         let page = originalPage;
-        page = page.replace("${card0}", 
-          cards[index].text && cards[index].uid >= accordionStart && cards[index].uid <= accordionEnd ? cards[index].text : "");
-        page = page.replace("${card1}", 
-          cards[index+1].text && cards[index+1].uid >= accordionStart && cards[index+1].uid <= accordionEnd  ? cards[index+1].text : "");
+        page = page.replace("${card0}",
+          cards[index].text ? cards[index].text : "");
+        page = page.replace("${card1}",
+          cards[index+1]?.text ? cards[index+1].text : "");
         flashcardStr += page;
+        accordionEnd = cards[index+1]?.text ? cards[index+1].uid : cards[index].uid;
         index += 2;
       }
       accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart.toString().padStart(4, "0")}`);
-      accordionStr = accordionStr.replace("${end}", `${(accordionEnd-1).toString().padStart(4, "0")}`);
+      accordionStr = accordionStr.replace("${end}", `${(accordionEnd).toString().padStart(4, "0")}`);
       accordionStr = accordionStr.replace("${flashcard}", flashcardStr);
 
       this.str += accordionStr;
