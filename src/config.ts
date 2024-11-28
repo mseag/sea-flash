@@ -34,7 +34,7 @@ export interface configFileType
 
 // Object to hold flashcard info
 export interface configType {
-  uid: number;
+  uid?: number;
   pos: PoS;
 
   english: string; // Word(s) in English

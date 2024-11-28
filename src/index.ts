@@ -45,31 +45,71 @@ const lwc = configFile.lwc;
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
-const Html = new html.Html(`${lwc} flashcards.htm`, lwc);
+// Content for the 3 types of flashcard pages
+const ImagesHtml = new html.Html(`${lwc}_images_flashcards.htm`, lwc, html.HtmlType.IMAGE);
+const NoImagesHtml = new html.Html(`${lwc}_without_images_flashcards.htm`, lwc, html.HtmlType.NO_IMAGE);
+const BlankHtml = new html.Html(`${lwc}_blank_flashcards.htm`, lwc, html.HtmlType.BLANK);
 
 // Determine range of UID indexes
-let cards : any[] = [];
+let imageCards : any[] = [];
+let noImageCards : any[] = [];
+let blankCards: any[] = [];
 const startUID = (configFile.startUID) ? configFile.startUID : 1;
 const endUID = (configFile.endUID) ? configFile.endUID : 50;
 const cardsPerAccordion = (configFile.cardsPerAccordion) ? configFile.cardsPerAccordion : 250;
 tsv.forEach((f, index) => {
   let UID = f.uid;
-  if (startUID <= UID && UID <= endUID) {
-    cards.push(
-      {
-        text: Html.makeFlashcard(f, Img.defaultSize[0]),
-        uid: UID
-      }
-    );
+  if (UID && startUID <= UID && UID <= endUID) {
+    if (f.img?.path) {
+      imageCards.push(
+        {
+          text: ImagesHtml.makeFlashcard(f, Img.defaultSize[0]),
+          uid: UID
+        }
+      );
+    } else {
+      noImageCards.push(
+        {
+          text: NoImagesHtml.makeFlashcard(f, Img.defaultSize[0]),
+          uid: UID
+        }
+      );
+    }
   } else {
     return;
   }
 });
 
+// Generate blank flashcards
+let blank : config.configType = {
+  english: ' ',
+  lwc: ' ',
+  pos: config.PoS.I,
+  ipa: ' '
+}
+blankCards.push(
+  {
+    text: BlankHtml.makeFlashcard(blank, Img.defaultSize[0]),
+    uid: 0
+  }
+);
+blankCards.push(
+  {
+    text: BlankHtml.makeFlashcard(blank, Img.defaultSize[0]),
+    uid: 0
+  }
+);
+
 // Write flashcards to file
 //Html.writeFlashcards2x3(cards);
-Html.writeFlashcards1x2(cards, cardsPerAccordion);
-Html.writeHTML();
+ImagesHtml.writeFlashcards1x2(imageCards, cardsPerAccordion);
+ImagesHtml.writeHTML();
+
+NoImagesHtml.writeFlashcards1x2(noImageCards, cardsPerAccordion);
+NoImagesHtml.writeHTML();
+
+BlankHtml.writeFlashcards1x2(blankCards, cardsPerAccordion);
+BlankHtml.writeHTML();
 
 console.log('All done processing');
 

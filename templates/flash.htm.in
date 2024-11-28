@@ -20,10 +20,10 @@
                 <div class="d-flex flex-column align-items-start mt-2">
                   <span>
                     &nbsp;1
-                    <img src="./assets/icons/circle.svg" width="20" class="ms-2 me-2"> 
-                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
-                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
-                    <img src="./assets/icons/circle.svg" width="20" class="me-2"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="ms-1 me-1"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
+                    <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
                   </span>  
                 </div>
                 <hr class="border border-primary">
