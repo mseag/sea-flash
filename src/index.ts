@@ -82,8 +82,8 @@ tsv.forEach((f, index) => {
 
 // Generate blank flashcards
 let blank : config.configType = {
-  english: ' ',
-  lwc: ' ',
+  english: '<br>',
+  lwc: '<br>',
   pos: config.PoS.I,
   ipa: ' '
 }
