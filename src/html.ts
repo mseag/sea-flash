@@ -6,9 +6,9 @@ import * as path from 'path'
 
 // 3 Types of pages: Flashcards with images, Flashcards without images, and blank flashcards
 export enum HtmlType {
-  IMAGE,
-  NO_IMAGE,
-  BLANK
+  IMAGE = "IMAGE",
+  NO_IMAGE = "NO IMAGE",
+  BLANK = "BLANK"
 }
 
 export class Html {
@@ -32,7 +32,7 @@ export class Html {
   private str: string;
 
   constructor(filename: string, lwc: string, htmlType: HtmlType) {
-    this.title = `${lwc} (${HtmlType[htmlType]}) Flash Cards`;
+    this.title = `Card sets (${lwc}) - ${htmlType}`;
     this.fileName = filename;
 
     // Header which includes title and table styling
