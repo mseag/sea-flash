@@ -140,7 +140,7 @@ function convertTSV(lwc: string, tsvText: any) : config.configType[] {
   }
 
   // Discard header line
-  const englishColumn = 4;
+  const englishColumn = 2;
   lines = lines.splice(1);
   lines.forEach((l, index) => {
     if (l != '') {
