@@ -46,10 +46,12 @@ const lwc_underscore = lwc.replaceAll(' ', '_');
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
+// Content for Blank flashcards
+const BlankHtml = new html.Html(`blank_flashcards.htm`, null, html.HtmlType.BLANK);
+
 // Content for the 3 types of flashcard pages
 const ImagesHtml = new html.Html(`${lwc_underscore}_images_flashcards.htm`, lwc, html.HtmlType.IMAGE);
 const NoImagesHtml = new html.Html(`${lwc_underscore}_without_images_flashcards.htm`, lwc, html.HtmlType.NO_IMAGE);
-const BlankHtml = new html.Html(`${lwc_underscore}_blank_flashcards.htm`, lwc, html.HtmlType.BLANK);
 
 // Determine range of UID indexes
 let imageCards : any[] = [];
