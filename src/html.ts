@@ -140,7 +140,7 @@ export class Html {
         page = page.replace("${card1}",
           cards[index+1]?.text ? cards[index+1].text : "");
         flashcardStr += page;
-        index += 2;
+        index += cards[index+1] ? 2 : 1;
       }
       accordionStr = accordionStr.replace(/\${start}/g, `${accordionStart.toString().padStart(4, "0")}`);
       accordionStr = accordionStr.replace("${end}", `${(accordionEnd).toString().padStart(4, "0")}`);
