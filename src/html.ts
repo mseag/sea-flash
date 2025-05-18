@@ -15,6 +15,7 @@ export class Html {
   // HTML template files
   public TEMPLATE_ROOT = "templates" + path.sep;
   public HEADER_IN = `${this.TEMPLATE_ROOT}header.htm.in`;
+  public PRINT_IN = `${this.TEMPLATE_ROOT}print.htm.in`;
   public FLASH_IN = `${this.TEMPLATE_ROOT}flash.htm.in`;
   public PAGE1x2_IN = `${this.TEMPLATE_ROOT}page1x2.htm.in`;
   public PAGE2x3_IN = `${this.TEMPLATE_ROOT}page2x3.htm.in`;
@@ -39,6 +40,10 @@ export class Html {
     this.str = fs.readFileSync(this.HEADER_IN, 'utf-8');
     this.str = this.str.replace(/\${title}/gi, this.title);
     //this.str += "<h1>" + this.title + "</h1>";
+
+    // Instructions to print
+    this.str += fs.readFileSync(this.PRINT_IN, 'utf-8');
+
   }
 
   /**
