@@ -42,13 +42,16 @@ config.validateFile(configFile);
 
 const Img = new img.Img(configFile.images);
 const lwc = configFile.lwc;
+const lwc_underscore = lwc.replaceAll(' ', '_');
 const tsvText = fs.readFileSync(configFile.wordlist, 'utf-8');
 const tsv = convertTSV(lwc, tsvText);
 
+// Content for Blank flashcards
+const BlankHtml = new html.Html(`blank_flashcards.htm`, "", html.HtmlType.BLANK);
+
 // Content for the 3 types of flashcard pages
-const ImagesHtml = new html.Html(`${lwc}_images_flashcards.htm`, lwc, html.HtmlType.IMAGE);
-const NoImagesHtml = new html.Html(`${lwc}_without_images_flashcards.htm`, lwc, html.HtmlType.NO_IMAGE);
-const BlankHtml = new html.Html(`${lwc}_blank_flashcards.htm`, lwc, html.HtmlType.BLANK);
+const ImagesHtml = new html.Html(`${lwc_underscore}_images_flashcards.htm`, lwc, html.HtmlType.IMAGE);
+const NoImagesHtml = new html.Html(`${lwc_underscore}_without_images_flashcards.htm`, lwc, html.HtmlType.NO_IMAGE);
 
 // Determine range of UID indexes
 let imageCards : any[] = [];
@@ -140,7 +143,7 @@ function convertTSV(lwc: string, tsvText: any) : config.configType[] {
   }
 
   // Discard header line
-  const englishColumn = 4;
+  const englishColumn = 2;
   lines = lines.splice(1);
   lines.forEach((l, index) => {
     if (l != '') {

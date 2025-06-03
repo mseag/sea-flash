@@ -10,7 +10,7 @@ node_modules/
 dist/
 
 # Generated flashcard file
-*flashcards.htm
+# *flashcards.htm
 *.pdf
 
 # Published artifacts

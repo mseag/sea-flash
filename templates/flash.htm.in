@@ -24,7 +24,8 @@
                     <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
                     <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
                     <img src="./assets/icons/circle.svg" width="20" class="me-1"> 
-                  </span>  
+                  </span>
+                  <br/>
                 </div>
                 <hr class="border border-primary">
                 <div class="d-flex flex-column align-items-start">
